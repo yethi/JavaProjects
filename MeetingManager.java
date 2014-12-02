@@ -3,6 +3,7 @@ package edu.uoc.prac;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Main class, which manager the program.
@@ -12,7 +13,7 @@ import java.util.Comparator;
 
 public class MeetingManager {
 	
-	static int idPlace = 0;
+	
     private ArrayList<User> users;
     private ArrayList<Meeting> meetings;
     private ArrayList<MeetingGroup> meetingGroups;    
@@ -144,7 +145,9 @@ public class MeetingManager {
      * @param nameMeetingGroup type of String
      * @return Meetingroup type of MeetingGroup
      */
+    //revisar esto
     public MeetingGroup listAll(String nameMeetingGroup){
+    	MeetingGroup mG = null;
     	ArrayList<User> usersMG = this.getMeetingGroup(nameMeetingGroup).getMembers();
     	int i = this.getMeetingGroup(nameMeetingGroup).getMembers().size();
     	
@@ -175,6 +178,7 @@ public class MeetingManager {
      * @return user type of User
      */
     public User addInterest(String email,String password, String interest) throws MeetingException{
+    	User user = null;
     	if(this.isUserInArrayLisyOfUsers(email, password, users)){
     		throw new UserNotFound();
     	//IF there are more than 5 interest or one is yet count	
@@ -183,8 +187,9 @@ public class MeetingManager {
     		throw new MaximunNumberOfInterestPerUser();
     	}else{
     		this.getUserFromUsersBy(email, password).addInterest(interest);
+    		user = this.getUserFromUsersBy(email, password);
     	}
-    	return null;
+    	return user;
     }
     /**
      * 8. List the meeting Group which are interesting for a user.
@@ -214,8 +219,6 @@ public class MeetingManager {
         		}	
     		}
     		
-    		
-    		
     	}else{
     		throw new UserNotFound();
     	}
@@ -230,20 +233,93 @@ public class MeetingManager {
      * @return place type of place
      * @throws MeetingException
      */
-    public Place addPlace(String name, String address, String zone, Boolean privateResident,String country) throws MeetingException{
-    	
+    public Place addPlace(String name, String address, String zone, String privateResidence,String country) throws MeetingException{
+    	Place place = null;
+    	if(this.existCountryOrPlace(country, name)){
+    		throw new PlaceAlreadyExist();
+    	}else{
+    		Place p = new Place(name, address, zone, (Integer.parseInt(privateResidence)==0)?true:false, country);
+    		p.newIdPlace();
+    		places.add(p);
+    	}
+    	return place;
+    }
+    /**
+     * 10. Assignment a place in a Meeting Group
+     * @param identifierPlace type os string
+     * @param nombreMeetingGroup type of string
+     * @return mG type of MeetingGroup
+     */
+    public MeetingGroup assignPlaceMG(String identifierPlace,String nameMeetingGroup) throws MeetingException{
+    	MeetingGroup mG=null;
+    	if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)){
+    		throw new MeetingGroupNotFound();
+    	}else if(this.getMeetingGroup(nameMeetingGroup).existPlace(identifierPlace)){
+    		throw new PlaceAlreadyInMeetingGroup();
+    	}else if(places.contains(this.getPlace(identifierPlace))){
+    		throw new PlaceNotFound();
+    	}else{
+    		this.getMeetingGroup(nameMeetingGroup).addPlace(this.getPlace(identifierPlace));
+    		mG = this.getMeetingGroup(nameMeetingGroup);
+    	}
+    	return mG;
+    }
+    /**
+     * 11. Add a new meeting in a exit meetingGroup
+     * @param nameMeetingGroup type of String
+     * @param idPlace type of String
+     * @param description type of String
+     * @param isDraft type of String
+     * @param attendeeLimit type of String
+     * @param waitList type of String
+     * @param gestMember type of String
+     * @param attendeeTotal type of String
+     * @return mG type of MeetingGroup
+     * @throws MeetingException
+     */
+    public MeetingGroup addMeetingMG(String nameMeetingGroup, String idPlace, String description,  String isDraft, String attendeeLimit,String waitList, String guestsPerMember, String attendeeTotal) throws MeetingException {
+		MeetingGroup mG = null;
+		if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)){
+    		throw new MeetingGroupNotFound();
+    	}else if(this.getMeetingGroup(nameMeetingGroup).existPlace(Integer.parseInt(idPlace))){
+    		throw new PlaceAlreadyInMeetingGroup();
+    	}else if(this.getMeetingGroup(nameMeetingGroup).existMeeting(description)){
+    		throw new MeetingAlreadyInGroup();
+    	}else{
+    		this.getMeetingGroup(nameMeetingGroup).addMeeting(new Meeting(description,(Integer.parseInt(isDraft)==0)?true:false,Integer.parseInt(attendeeLimit),Integer.parseInt(waitList),Integer.parseInt(guestsPerMember), Integer.parseInt(attendeeTotal), this.getPlace(Integer.parseInt(idPlace))));
+    		mG = this.getMeetingGroup(nameMeetingGroup);
+    	}
+		return mG;
+	}
+    /**
+     * 12. Add a new answer to a meeting Manager
+     * @param description type of String
+     * @param email type of String
+     * @param password type of String
+     * @param guest type of String
+     * @param result type of String
+     * @return Answer type of Answer
+     * @throws MeetingException
+     */
+    public Answer addAnswer(String description,String email, String password, String guest,String result) throws MeetingException{
     	return null;
     }
-    
-    
     /**
+     * 13. List answer for a meeting
+     * @param Meeting type of String.
+     */
+    public void listMeetingAnswers(String nameMeeting){
+    	
+    }
+
+	/**
      * (non-Javadoc)
      * @see java.lang.Object#toString()
      *
      */
     public String toString(){
-	StringBuilder sb = new StringBuilder();	
-	return sb.toString();
+    	StringBuilder sb = new StringBuilder();	
+    	return sb.toString();
     }
     
     /**
@@ -307,20 +383,51 @@ public class MeetingManager {
     	}
     	return user;
     }
-    /**
-     * Increment the Id.
-     */
-    public static void newIdPlace(){
-    	idPlace++;
-    }
+   /**
+    * figure out there are a place in that country
+    * @param country type of String
+    * @param name type of string
+    * @return exist type of boolean
+    */
     
-    public boolean ExistCountryOrPlace(String country, String place){
+    public boolean existCountryOrPlace(String country, String name){
     	boolean exist = false;
     	for(Place p : places){
-    		if(p.getName().equals(place)||p.getCountry().equals(country)){
+    		if(p.getName().equals(name)&&p.getCountry().equals(country)){
     			exist = true;
     		}
     	}
     	return exist;
     }
+    /**
+     * Get place in places
+     * @param identifierPlace type of String
+     * @return place type of Place
+     */
+    private Place getPlace(String identifierPlace) {
+		Place place = null;
+		for(Place p: places ){
+			if(p.getName().equals(identifierPlace)){
+				place = p;
+			}
+		}
+		return place;
+	}
+    /**
+     * Get place in places
+     * @param identifierPlace type of String
+     * @return place type of Place
+     */
+    private Place getPlace(Integer idPlace) {
+		Place place = null;
+		for(Place p: places ){
+			if(p.getId().equals(idPlace)){
+				place = p;
+			}
+		}
+		return place;
+	}
+
+
+	
 }

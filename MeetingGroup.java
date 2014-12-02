@@ -64,13 +64,7 @@ public class MeetingGroup {
 	}
     public void addMeeting(Meeting u){	
 		if (u!=null){
-		    if (meetings.contains(u)){
-			System.out.println("Meeting already in Meeting Group. Not added. "+u.getDescription());
-		    }
-		    else{
 			meetings.add(u);
-			System.out.println("New Meeting added");
-		    }
 		}
     }
     /**
@@ -153,6 +147,58 @@ public class MeetingGroup {
 	public ArrayList<Meeting> getMeetings() {
 		return meetings;
 	}
-
+	/**
+	 * Exist this place in meetingGroup
+	 * @param name type of String
+	 * @return exist type of booelan
+	 */
+	
+	public boolean existPlace(String name){
+		boolean exist= false;
+		for(Place p: places){
+			if(p.getName().equals(name)){
+				exist = true;
+			}
+		}
+		return exist;
+	}
+	
+	/**
+	 * Exist this place in meetingGroup
+	 * @param name type of String
+	 * @return exist type of booelan
+	 */
+	
+	public boolean existPlace(Integer idPlace){
+		boolean exist= false;
+		for(Place p: places){
+			if(p.getId().equals(idPlace)){
+				exist = true;
+			}
+		}
+		return exist;
+	}
+	/**
+	 * Add a new place in MeetingGroup
+	 * @param place type of Place
+	 */
+	public void addPlace(Place place) {
+		places.add(place);
+	}
+	/**
+	 * Exist meeting on meeting Group
+	 * @return exist type of Boolean
+	 */
+	public Boolean existMeeting(String description){
+		boolean exist = false;
+		for(Meeting m : meetings){
+			if(m.getDescription().equals(description)){
+				exist = true;
+			}
+		}
+		return exist;
+	}
+	
+	public Meeting
       
 }

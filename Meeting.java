@@ -63,7 +63,30 @@ public class Meeting {
 		this.place=place;
 		
     }
-
+    /**
+     * Construction 2
+     * @param description type of String
+     * @param isDraft type of boolean
+     * @param attendeeLimit type of Integer
+     * @param waitList type of Integer
+     * @param guestsPerMember type of Integer
+     * @param attendeeTotal type of Integer
+     * @param place type of Place
+     */
+    public Meeting(String description, boolean isDraft, int attendeeLimit, int waitList, int guestsPerMember, int attendeeTotal,  Place place){
+		this.description=description;
+		this.isDraft=isDraft;
+		this.attendeeLimit=attendeeLimit;
+		this.waitList=waitList;
+		this.guestsPerMember=guestsPerMember;
+		this.attendeeTotal=attendeeTotal;
+		this.place=place;
+		
+    }
+    /**
+     * Getter for description
+     * @return description type of String
+     */
     public String getDescription(){
 	return description;
     }

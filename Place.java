@@ -20,9 +20,15 @@ public class Place {
   
   private Integer id; 
 
-  private Country country; 
+  //private Country country; 
+  
+  private String country;
 
   private ArrayList<Meeting> meetings;
+  
+  private static int idPlace = 0;
+
+
 
   //methods	
   /**
@@ -35,16 +41,29 @@ public class Place {
      * @param country type of Country      
      */
 
-    public Place(String name, String address, String zone, boolean privateResidence, Integer id, Country country){
+    public Place(String name, String address, String zone, boolean privateResidence, String country){
 		this.name=name;
 		this.address=address;
 		this.zone=zone;
 		this.privateResidence=privateResidence;
-		this.country=country;	
+		this.country=country;
+		this.id = this.idPlace;
 	
     }
-    
-
+    /**
+     * Getter for name
+     * @return name type of string
+     */
+    public String getName(){
+    	return this.name;
+    }
+    /**
+     * Getter for country
+     * @return country type of string
+     */
+    public String getCountry(){
+    	return this.country;
+    }
 	/**
      * (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -55,6 +74,19 @@ public class Place {
 	sb.append("\nPlace Name: "+name+"\nAddress: "+address+"\nPrivate Residence: "+((privateResidence==false) ? "No":"Yes")+"\nCountry: "+country+"\n");	
 	return sb.toString();
     }
+    /**
+     * Increment the Id.
+     */
+    public static void newIdPlace(){
+    	idPlace++;
+    }
+    /**
+     * Getter of Id
+     * @return id type of Integer
+     */
+	public Integer getId(){
+		return this.id;
+	}
 
 
 }
