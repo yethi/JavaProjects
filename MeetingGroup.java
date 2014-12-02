@@ -146,6 +146,13 @@ public class MeetingGroup {
 			System.out.println(" Email: "+this.assignment.getOrganizer().getEmail()+"Pwd: "+this.assignment.getOrganizer().getPassword()+" phone: "+this.assignment.getOrganizer().getPhone());
 		}
 	}
+	/**
+	 * Getter of meeting
+	 * @return meeting type of ArrayList<Meeting>
+	 */
+	public ArrayList<Meeting> getMeetings() {
+		return meetings;
+	}
 
       
 }

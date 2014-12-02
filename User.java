@@ -48,14 +48,16 @@ public class User{
    /**
     * list the interested of user
     */
-   public void listInterests(){
+   public String listInterests(){
+	   StringBuilder sb = new StringBuilder();
 	   if(interested.isEmpty()){
-		   System.out.println("Not aviable interest for this User");
+		   sb.append("Not aviable interest for this User");
 	   }else{
 		   for(String in : interested){
-			   System.out.println(in); 
+			   sb.append(in+"\n");
 		   }
 	   }
+	   return sb.toString();
    }
     
     public String toString(){

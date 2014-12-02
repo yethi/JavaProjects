@@ -11,7 +11,8 @@ import java.util.Comparator;
  */
 
 public class MeetingManager {
-
+	
+	static int idPlace = 0;
     private ArrayList<User> users;
     private ArrayList<Meeting> meetings;
     private ArrayList<MeetingGroup> meetingGroups;    
@@ -46,17 +47,17 @@ public class MeetingManager {
     /**
      * 2. List the  user in the MeetingManager, include .
      */
-    public void listUser(){
-    	
+    public String listUsers(){
+    	StringBuilder sb = new StringBuilder();
     	if(users.isEmpty()){
-    		System.out.println("No existing Users yet");
+    		sb.append("No existing Users yet");
     	}else{
-    		System.out.println("Meeting Manager Users:");
+    		sb.append("Meeting Manager Users:\n");
     		for(User u : users){
-    			System.out.println("*"+u.toString());
-    			u.listInterests();
+    			sb.append("*"+u.toString()+"\n"+u.listInterests());
     		}
     	}
+    	return sb.toString();
     }
     /**
      * 3. Create a meeting group at same time that assignment a organizator 
@@ -92,26 +93,26 @@ public class MeetingManager {
      * @param password type of string
      * @return meetingGroup type of MeetingGroup
      */
-    public MeetingGroup addCoorganizer(MeetingGroup meetingGroup, String email, String password) throws MeetingException {
+    public MeetingGroup addCoorganizer(String nameMeetingGroup, String email, String password) throws MeetingException {
     	//Does user include in MeetingManager
     	if(this.isUserInArrayLisyOfUsers(email, password, users)){
     		throw new NotExistingUserCoordinator();
     	//Is member include in MeetingGroup?
-    	}else if(this.isUserInArrayLisyOfUsers(email, password, meetingGroup.getMembers())){
+    	}else if(this.isUserInArrayLisyOfUsers(email, password, this.getMeetingGroup(nameMeetingGroup).getMembers())){
     		throw new NotExistingUserMember();
     	//MeetingGroup exit?
-    	}else if(meetingGroups.contains(meetingGroup)==false){
+    	}else if(meetingGroups.contains(this.getMeetingGroup(nameMeetingGroup))==false){
     		throw new NotExistingMeetingGroup();
-    	}else if(meetingGroup.getAssignment().getOrganizer().getEmail().equals(email) &&
-    			meetingGroup.getAssignment().getOrganizer().getPassword().equals(password)){
+    	}else if(this.getMeetingGroup(nameMeetingGroup).getAssignment().getOrganizer().getEmail().equals(email) &&
+    			this.getMeetingGroup(nameMeetingGroup).getAssignment().getOrganizer().getPassword().equals(password)){
     		//Is user a organizer? error 6
     		throw new UserIsAlreadyTheOrganizer();
-    	}else if(this.isUserInArrayLisyOfUsers(email, password, meetingGroup.getCoorganizator())){
+    	}else if(this.isUserInArrayLisyOfUsers(email, password, this.getMeetingGroup(nameMeetingGroup).getCoorganizator())){
     		throw new UserIsAlreadyACoorganizer();
     	}else{
-    		meetingGroup.addCoorganizer(new User(email,password));
+    		this.getMeetingGroup(nameMeetingGroup).addCoorganizer(new User(email,password));
     	}			
-    	return meetingGroup;
+    	return this.getMeetingGroup(nameMeetingGroup);
     }
     /**
      * 5. Add a member in a meeting group
@@ -141,8 +142,9 @@ public class MeetingManager {
     /**
      * 6. List all the info about one meeting group
      * @param nameMeetingGroup type of String
+     * @return Meetingroup type of MeetingGroup
      */
-    public void listAll(String nameMeetingGroup){
+    public MeetingGroup listAll(String nameMeetingGroup){
     	ArrayList<User> usersMG = this.getMeetingGroup(nameMeetingGroup).getMembers();
     	int i = this.getMeetingGroup(nameMeetingGroup).getMembers().size();
     	
@@ -163,6 +165,7 @@ public class MeetingManager {
     	}
     	this.getMeetingGroup(nameMeetingGroup).listCoorganizer();
     	this.getMeetingGroup(nameMeetingGroup).listOrganizer();
+    	return this.getMeetingGroup(nameMeetingGroup);
     }
     /**
      * 7. Add a new interest to one User
@@ -189,7 +192,47 @@ public class MeetingManager {
      * @param password type of String
      */
     public void searchMeeting(String email, String password) throws MeetingException{
+    	if(this.isUserInArrayLisyOfUsers(email, password, users)){
+    		User u = this.getUserFromUsersBy(email, password);
+    		System.out.println(u.toString());
+    		boolean hasInterest = false;
+    		for(String s : u.getInterest()){
+    			System.out.println("Checking interest ....."+s);
+    			for(MeetingGroup mG : meetingGroups ){
+    				for(Meeting m : mG.getMeetings()){
+    					if(s.equals(m.getDescription())){
+    						 hasInterest = true;
+    					}
+    				}
+    				if(hasInterest){	
+    					System.out.println("Maching MeeetingGroup"+ mG.getName()+" for interest "+s);
+    				}
+    			}
+    			
+    			if (hasInterest = false){
+        			System.out.println("No Matching meeting group for interest "+s);
+        		}	
+    		}
+    		
+    		
+    		
+    	}else{
+    		throw new UserNotFound();
+    	}
+    }
+    /**
+     * 9. Add a place to Meeting manager
+     * @param name type of string
+     * @param addresstype of string
+     * @param zone type of string
+     * @param privateResident type of boolean
+     * @param country type of Country
+     * @return place type of place
+     * @throws MeetingException
+     */
+    public Place addPlace(String name, String address, String zone, Boolean privateResident,String country) throws MeetingException{
     	
+    	return null;
     }
     
     
@@ -264,5 +307,20 @@ public class MeetingManager {
     	}
     	return user;
     }
-
+    /**
+     * Increment the Id.
+     */
+    public static void newIdPlace(){
+    	idPlace++;
+    }
+    
+    public boolean ExistCountryOrPlace(String country, String place){
+    	boolean exist = false;
+    	for(Place p : places){
+    		if(p.getName().equals(place)||p.getCountry().equals(country)){
+    			exist = true;
+    		}
+    	}
+    	return exist;
+    }
 }

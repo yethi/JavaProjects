@@ -11,13 +11,13 @@ import java.util.ArrayList;
 public class Assignment {
 	//attribute
 	private Integer fixedFee;
-	private Integer percentage;
+	private double percentage;
 	private Organizer organizer;
 	
 	private ArrayList<MeetingGroup> meetingGroups;
 	
 	
-	public Assignment(Integer fixedFee, Integer percentage, Organizer organizer){
+	public Assignment(Integer fixedFee, double percentage, Organizer organizer){
 		this.fixedFee = fixedFee;
 		this.percentage = percentage;
 		this.organizer = organizer;
@@ -41,7 +41,7 @@ public class Assignment {
 	 * Getter of percentage
 	 * @return percentage type of Integer
 	 */
-	public Integer getPercentage(){
+	public double getPercentage(){
 		return this.percentage;
 	}
 	/**

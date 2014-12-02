@@ -37,7 +37,7 @@ public class Organizer extends User {
 		}
 	}
 	/**
-	 * Gettter for phone
+	 * Getter for phone
 	 * @return phone type of string
 	 */
 	public String getPhone() {
