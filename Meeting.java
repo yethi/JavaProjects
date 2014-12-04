@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 /**
  * 
- * @author DPOO
+ * @author Oscar Cuellas Cuellas
  *
  */
 
@@ -98,9 +98,17 @@ public class Meeting {
      */
     public String toString(){
 	StringBuilder sb = new StringBuilder();
-	sb.append("Description: "+description+"\nWhen? "+date+"\nDraft? "+((isDraft==false)?"No":"Yes")+"\nMaximum attendance Limit? "+((attendeeLimit==0)?true:false)+"\nAvailable waiting list? "+((waitList==1)?true:false)+"\nNumber of guests per Member: "+guestsPerMember+ "\nExpected attendeeTotal (no anwers computed) "+attendeeLimit+" "+place+"\n");	
+	sb.append("Description: "+description+"\nWhen? "+date+"\nDraft? "+((isDraft==false)?"No":"Yes")+"\nMaximum attendance Limit? "+((attendeeLimit==0)?true:false)+"\nAvailable waiting list? "+((waitList==1)?true:false)+"\nNumber of guests per Member: "+guestsPerMember+ "\nExpected attendeeTotal (no anwers computed) "+attendeeLimit+"\n");	
 	return sb.toString();
     }
+    
+    /**
+     *Getter of Place 
+     * @return place type of Place
+     */
+	public Place getPlace() {
+		return this.place;
+	}
 
   
 }

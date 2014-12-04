@@ -13,6 +13,11 @@ import java.util.Date;
 
 public class MeetingManager {
 	
+	private final static int FIXED_FEE = 15;
+	private final static double PERCENTAGE = 0.1;	
+	
+	private int fixedFee = FIXED_FEE;
+	private double percentage = PERCENTAGE;
 	
     private ArrayList<User> users;
     private ArrayList<Meeting> meetings;
@@ -24,7 +29,12 @@ public class MeetingManager {
      * Constructor   
      */
 
-    public MeetingManager(){	
+    public MeetingManager(){
+    	this.users = new ArrayList<User>();
+    	this.meetings = new ArrayList<Meeting>();
+    	this.meetingGroups = new ArrayList<MeetingGroup>();
+    	this.answers = new ArrayList<Answer>();
+    	this.places = new ArrayList<Place>();
     }
     
   
@@ -36,12 +46,11 @@ public class MeetingManager {
      */
     public  User addUser (String email, String password) throws MeetingException {
     	User u=null;
-    	if(this.isUserInArrayLisyOfUsers(email, password, users)){
+    	if(this.isUserInArrayLisyOfUsers(email, users)){
     			throw new UserAlreadyExists();
     	}else{	
     			u = new User(email,password);
     			users.add(u);
-    			System.out.println("+ New user:"+u.getEmail()+" pwd:"+u.getPassword());
     	}
     	return u;
     }
@@ -51,11 +60,11 @@ public class MeetingManager {
     public String listUsers(){
     	StringBuilder sb = new StringBuilder();
     	if(users.isEmpty()){
-    		sb.append("No existing Users yet");
+    		sb.append("No existing Users yet\n");
     	}else{
     		sb.append("Meeting Manager Users:\n");
     		for(User u : users){
-    			sb.append("*"+u.toString()+"\n"+u.listInterests());
+    			sb.append("*"+u.getEmail()+" "+ u.getPassword()+" \n"+u.listInterests()+"\n");
     		}
     	}
     	return sb.toString();
@@ -71,19 +80,16 @@ public class MeetingManager {
     public MeetingGroup addMeetingGroup(String meetingGroup,String email, String password, String phone) throws MeetingException{
     	MeetingGroup mG = null;
     	//Does coordinator in meetingManager?
-    	if(this.isUserInArrayLisyOfUsers(email, password, users)){
-    			throw new NotExistingUserCoordinator();
-    	}else{
+    	if(this.isMeetingGroupInArrayListMG(meetingGroup, meetingGroups)){
+    			 throw new MeetingGroupAlreadyExist();
+    	}else if(this.isUserInArrayLisyOfUsers(email, users)==false){
+    		throw new NotExistingUserCoordinator();
     			//Does MeetingGroup exit yet?
-        		if(this.isMeetingGroupInArrayListMG(meetingGroup, meetingGroups)){
-        				throw new MeetingGroupAlreadyExist();
-        		}else{
-        			Organizer organizer = new Organizer(email, password, phone);
-        			Assignment assignment = new Assignment(fixedFee, percentage, organizer);
-        			mG = new MeetingGroup(meetingGroup, assignment);
-        			meetingGroups.add(mG);
-        
-        	}	
+    	}else{
+    		Organizer organizer = new Organizer(email, password, phone);
+			Assignment assignment = new Assignment(this.fixedFee, this.percentage, organizer);
+			mG = new MeetingGroup(meetingGroup, assignment);
+			meetingGroups.add(mG);			
     	}
     	return mG;
     }
@@ -96,10 +102,7 @@ public class MeetingManager {
      */
     public MeetingGroup addCoorganizer(String nameMeetingGroup, String email, String password) throws MeetingException {
     	//Does user include in MeetingManager
-    	if(this.isUserInArrayLisyOfUsers(email, password, users)){
-    		throw new NotExistingUserCoordinator();
-    	//Is member include in MeetingGroup?
-    	}else if(this.isUserInArrayLisyOfUsers(email, password, this.getMeetingGroup(nameMeetingGroup).getMembers())){
+    	if(this.isUserInArrayLisyOfUsers(email, users)==false){
     		throw new NotExistingUserMember();
     	//MeetingGroup exit?
     	}else if(meetingGroups.contains(this.getMeetingGroup(nameMeetingGroup))==false){
@@ -108,7 +111,7 @@ public class MeetingManager {
     			this.getMeetingGroup(nameMeetingGroup).getAssignment().getOrganizer().getPassword().equals(password)){
     		//Is user a organizer? error 6
     		throw new UserIsAlreadyTheOrganizer();
-    	}else if(this.isUserInArrayLisyOfUsers(email, password, this.getMeetingGroup(nameMeetingGroup).getCoorganizator())){
+    	}else if(this.isUserInArrayLisyOfUsers(email, this.getMeetingGroup(nameMeetingGroup).getCoorganizator())){
     		throw new UserIsAlreadyACoorganizer();
     	}else{
     		this.getMeetingGroup(nameMeetingGroup).addCoorganizer(new User(email,password));
@@ -124,17 +127,17 @@ public class MeetingManager {
      */
     public MeetingGroup addMember(String nameMeetingGroup, String email,String password) throws MeetingException{
     	
-    	if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)){
+    	if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)==false){
     		throw new NotExistingMeetingGroup();
-    	}else if(this.isUserInArrayLisyOfUsers(email, password, users)){
+    	}else if(this.isUserInArrayLisyOfUsers(email, users)==false){
     		throw new UserNotFound();
-    	}else if(this.isUserInArrayLisyOfUsers(email, password,this.getMeetingGroup(nameMeetingGroup).getMembers())){
-    		throw new UserIsAlreadyAMember();
+    	}else if(this.isUserInArrayLisyOfUsers(email, this.getMeetingGroup(nameMeetingGroup).getCoorganizator())){
+    		throw new UserIsAlreadyACoorganizer();
     	}else if(this.getMeetingGroup(nameMeetingGroup).getAssignment().getOrganizer().getEmail().equals(email) &&
     			this.getMeetingGroup(nameMeetingGroup).getAssignment().getOrganizer().getPassword().equals(password)){
     		throw new UserIsAlreadyTheOrganizer();
-    	}else if(this.isUserInArrayLisyOfUsers(email, password, this.getMeetingGroup(nameMeetingGroup).getCoorganizator())){
-    		throw new UserIsAlreadyACoorganizer();
+    	}else if(this.isUserInArrayLisyOfUsers(email, this.getMeetingGroup(nameMeetingGroup).getMembers())){
+    		throw new UserIsAlreadyAMember();
     	}else{
     		this.getMeetingGroup(nameMeetingGroup).addMember(new User(email,password));
     	}
@@ -145,30 +148,15 @@ public class MeetingManager {
      * @param nameMeetingGroup type of String
      * @return Meetingroup type of MeetingGroup
      */
-    //revisar esto
-    public MeetingGroup listAll(String nameMeetingGroup){
+
+    public MeetingGroup listAll(String nameMeetingGroup) throws MeetingException{
     	MeetingGroup mG = null;
-    	ArrayList<User> usersMG = this.getMeetingGroup(nameMeetingGroup).getMembers();
-    	int i = this.getMeetingGroup(nameMeetingGroup).getMembers().size();
-    	
-    	if(i ==0){
-    		while(i > 0){
-    			User userPrimero = this.getMeetingGroup(nameMeetingGroup).getMembers().get(i);
-    			for(User u : usersMG){
-    				if(u.getEmail().compareToIgnoreCase(userPrimero.getEmail())<0){
-    					userPrimero = u;
-    				}
-    			}
-    			System.out.println(userPrimero.toString());
-    			usersMG.remove(userPrimero);
-    			i = this.getMeetingGroup(nameMeetingGroup).getMembers().size(); 
-    		}
+    	if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)==false){
+    		throw new NotExistingMeetingGroup();
     	}else{
-    		System.out.println("No User to show");
+	    	mG = this.getMeetingGroup(nameMeetingGroup);
     	}
-    	this.getMeetingGroup(nameMeetingGroup).listCoorganizer();
-    	this.getMeetingGroup(nameMeetingGroup).listOrganizer();
-    	return this.getMeetingGroup(nameMeetingGroup);
+    	return mG;
     }
     /**
      * 7. Add a new interest to one User
@@ -179,8 +167,8 @@ public class MeetingManager {
      */
     public User addInterest(String email,String password, String interest) throws MeetingException{
     	User user = null;
-    	if(this.isUserInArrayLisyOfUsers(email, password, users)){
-    		throw new UserNotFound();
+    	if(this.isUserInArrayLisyOfUsers(email, users)==false){
+    		throw new NotExistingUserMember();
     	//IF there are more than 5 interest or one is yet count	
     	}else if((this.getUserFromUsersBy(email, password).getNumberInterest() >=5)||
     			(this.getUserFromUsersBy(email, password).getInterest().contains(interest))){
@@ -197,26 +185,22 @@ public class MeetingManager {
      * @param password type of String
      */
     public void searchMeeting(String email, String password) throws MeetingException{
-    	if(this.isUserInArrayLisyOfUsers(email, password, users)){
+    	if(this.isUserInArrayLisyOfUsers(email, users)){
     		User u = this.getUserFromUsersBy(email, password);
-    		System.out.println(u.toString());
     		boolean hasInterest = false;
     		for(String s : u.getInterest()){
     			System.out.println("Checking interest ....."+s);
     			for(MeetingGroup mG : meetingGroups ){
     				for(Meeting m : mG.getMeetings()){
     					if(s.equals(m.getDescription())){
-    						 hasInterest = true;
+    						System.out.println("Maching MeeetingGroup"+ mG.getName()+" for interest "+s);
     					}
-    				}
-    				if(hasInterest){	
-    					System.out.println("Maching MeeetingGroup"+ mG.getName()+" for interest "+s);
+    					else{
+    						System.out.println("No Matching meeting group for interest "+s);
+    					}
     				}
     			}
     			
-    			if (hasInterest = false){
-        			System.out.println("No Matching meeting group for interest "+s);
-        		}	
     		}
     		
     	}else{
@@ -238,7 +222,7 @@ public class MeetingManager {
     	if(this.existCountryOrPlace(country, name)){
     		throw new PlaceAlreadyExist();
     	}else{
-    		Place p = new Place(name, address, zone, (Integer.parseInt(privateResidence)==0)?true:false, country);
+    		Place p = new Place(name, address, zone, (privateResidence.equals("yes"))?true:false, country);
     		p.newIdPlace();
     		places.add(p);
     	}
@@ -302,7 +286,9 @@ public class MeetingManager {
      * @throws MeetingException
      */
     public Answer addAnswer(String description,String email, String password, String guest,String result) throws MeetingException{
-    	return null;
+    	Answer a = null;
+    	
+    	return a;
     }
     /**
      * 13. List answer for a meeting
@@ -329,13 +315,13 @@ public class MeetingManager {
      * @param userss type of ArrayList<User>
      * @return type of Boolean
      */
-    public boolean isUserInArrayLisyOfUsers( String email,String password, ArrayList<User> userss){
+   private boolean isUserInArrayLisyOfUsers( String email, ArrayList<User> users){
     	boolean isInsideMM = false;
-    	for(User u : userss){
-    		if(u.getEmail().equals(email)&&u.getPassword().equals(password)){
-    			isInsideMM = true;
-    		}
-    	}
+    		for(User u : users){
+    			if(u.getEmail().equals(email)&&users.isEmpty()==false){
+    				isInsideMM = true;
+    			}
+    		} 	
     	return isInsideMM;
     }
     /**
@@ -344,11 +330,11 @@ public class MeetingManager {
      * @param arrayList type of ArrayList<MeetingGroup>
      * @return isInsideAl type of boolean
      */
-    public boolean isMeetingGroupInArrayListMG(String nameObject, ArrayList<MeetingGroup> arrayList){
+   private boolean isMeetingGroupInArrayListMG(String nameMeetingGroup, ArrayList<MeetingGroup> arrayList){
     	boolean isInsideAL = false;
     	for(MeetingGroup mG : arrayList){
 			//Does MeetingGroup exit yet?
-    		if(mG.getName().equals(nameObject)){
+    		if(mG.getName().equals(nameMeetingGroup)&&arrayList.isEmpty()==false){
     			isInsideAL = true;
     		}
     	}	
@@ -359,7 +345,7 @@ public class MeetingManager {
      * @param nameMeetingGroup type of String
      * @return Mg type of MeetingGroup
      */
-    public MeetingGroup getMeetingGroup(String nameMeetingGroup){
+    private MeetingGroup getMeetingGroup(String nameMeetingGroup){
     	MeetingGroup Mg = null;
     	for(MeetingGroup mG : meetingGroups){
     		if(mG.getName().equals(nameMeetingGroup)){
@@ -374,7 +360,7 @@ public class MeetingManager {
      * @param password type of String
      * @return user type of User
      */
-    public User getUserFromUsersBy(String email, String password){
+    private User getUserFromUsersBy(String email, String password){
     	User user=null;
     	for(User u : users ){
     		if(u.getEmail().equals(email)&&u.getPassword().equals(password)){
@@ -390,7 +376,7 @@ public class MeetingManager {
     * @return exist type of boolean
     */
     
-    public boolean existCountryOrPlace(String country, String name){
+    private boolean existCountryOrPlace(String country, String name){
     	boolean exist = false;
     	for(Place p : places){
     		if(p.getName().equals(name)&&p.getCountry().equals(country)){

@@ -30,6 +30,7 @@ public class User{
     public User(String email, String password){
     	this.email=email;
     	this.password=password;
+    	this.interested = new ArrayList<String>();
     }
    /**
     * Getter for email
@@ -51,18 +52,20 @@ public class User{
    public String listInterests(){
 	   StringBuilder sb = new StringBuilder();
 	   if(interested.isEmpty()){
-		   sb.append("Not aviable interest for this User");
+		   sb.append("Not available Interests for user yet\n");
 	   }else{
+		   sb.append("List of Interest\n");
 		   for(String in : interested){
-			   sb.append(in+"\n");
+			   sb.append(in+" ");
 		   }
+		   sb.append("\n");
 	   }
 	   return sb.toString();
    }
     
     public String toString(){
     	StringBuilder sb = new StringBuilder();
-    	sb.append(" email "+email+" password "+password);	
+    	sb.append(email+" "+password+"\n"+ this.listInterests());	
     	return sb.toString();
     }
     /**

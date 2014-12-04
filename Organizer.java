@@ -26,7 +26,7 @@ public class Organizer extends User {
 	public void addAssignments(Assignment assignment){
 		try{
 			for(Assignment a : assignments){
-				if(a.getFixedFee().equals(assignment.getFixedFee())&&a.getPercentage().equals(assignment.getPercentage())){
+				if(a.getFixedFee().equals(assignment.getFixedFee())&& a.getPercentage()== assignment.getPercentage()){
 					throw new DuplicateAssignment();
 				}else{
 					assignments.add(assignment);

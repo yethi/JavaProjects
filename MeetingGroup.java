@@ -1,6 +1,8 @@
 package edu.uoc.prac;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Group which contain the user, meeting and places.
@@ -32,6 +34,10 @@ public class MeetingGroup {
     public MeetingGroup(String name, Assignment assignment){
     	this.name=name;
     	this.assignment = assignment;
+    	this.meetings = new ArrayList<Meeting>();
+    	this.places = new ArrayList<Place>();
+    	this.members = new ArrayList<User>();
+    	this.coorganizers = new ArrayList<User>();
     	assignment.addMeetingGroup(this);
 	
     } 
@@ -74,27 +80,94 @@ public class MeetingGroup {
     public ArrayList<User> getCoorganizator(){
     	return coorganizers;
     }
+    
     /**
      * (non-Javadoc)
      * @see java.lang.Object#toString()
      *
      */
+   
+    
     public String toString(){
 		StringBuilder sb = new StringBuilder();
 		if (this!=null){	    
-		    sb.append("Meeting group info -------------------------------------------- Name: "+this.name);
-		    sb.append("Users info: ");
-		    for (User u:members){
-			sb.append(u);
+		    sb.append("Information Meeting group Name: "+this.name);
+		    sb.append("\n");
+		    
+		    if(members.isEmpty()){
+		    	sb.append(" No members to show\n");
+		    	sb.append("\n");
+		    }else{
+		    	sb.append("MeetingGroup Members in alphabetical email order\n");
+		    	sb.append("\n");
+		    	List<String> emails = new ArrayList<String>();
+		    	for (User u: members){
+		    		emails.add(u.getEmail());
+		    	}
+		    	Collections.sort(emails);
+		    	for(String s : emails){
+		    		for(User u : members){
+		    			if(u.getEmail().equals(s)&&this.isNotMemberCoordinator(s)){
+		    				sb.append(u.toString() + "\n"+u.listInterests());
+		    				sb.append("\n");
+		    				
+		    			}
+		    		}
+		    	}
+		    }		    
+		    //coorganizers list
+		    if(coorganizers.isEmpty()){
+		    	
+		    	sb.append("No coorganizers to show\n");
+		    	sb.append("\n");
+		    }else{
+		    	sb.append("MeetingGroup Coorganizer information\n");
+		    	sb.append("\n");
+		    	for (User u: coorganizers){
+		    		sb.append(u.toString() + "\n" +u.listInterests()+ "\n");
+		    	}
+		    	sb.append("\n");
 		    }
-		    sb.append("Meetings info ------- ");
-		    for (Meeting u:meetings){
-			sb.append(u);
+		    if(assignment.getOrganizer() == null){
+		    	sb.append("No Organizers to show\n");
+		    }else{
+		    	sb.append("MeetingGroup Organizer information\n");
+		    	sb.append("\n");
+		    	sb.append(assignment.toString());
+		    	sb.append("\n");
 		    }
+		    
+		    if(meetings.isEmpty()){
+		    	sb.append("Not Place to show\n");
+		    	sb.append("No Meetings to show\n");
+		    	sb.append("\n");
+		    }else{
+		    	for (Meeting u:meetings){
+		    		if(u.getPlace() == null){
+		    			sb.append("Not Place to show\n");
+		    			sb.append("\n");
+		    		}else{
+		    			sb.append(u.getPlace().toString()+"\n");
+		    			sb.append("\n");
+		    		}
+			    }
+		    	sb.append("MeetingGroup Meeting information\n");
+		    	sb.append("\n");
+		    	for (Meeting u:meetings){
+			    	sb.append(u.toString()+"\n");
+			    	sb.append("\n");
+			    }
+		    	sb.append("\n");
+		    }
+		    
 		}
 		return sb.toString();
     }
-    /**
+    private Object getMember(String s) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
      * Getter of Assignment
      * @return assignment type of Assignment
      */
@@ -199,6 +272,13 @@ public class MeetingGroup {
 		return exist;
 	}
 	
-	public Meeting
-      
+    public boolean isNotMemberCoordinator(String email){
+    	boolean isCoorganizer = true;
+    	for (User u : coorganizers ){
+    		if(u.getEmail().equals(email)){
+    			isCoorganizer = false;
+    		}
+    	}
+    	return isCoorganizer;
+    }  
 }

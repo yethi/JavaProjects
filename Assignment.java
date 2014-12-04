@@ -21,6 +21,7 @@ public class Assignment {
 		this.fixedFee = fixedFee;
 		this.percentage = percentage;
 		this.organizer = organizer;
+		this.meetingGroups = new ArrayList<MeetingGroup>();
 	}
 	/**
 	 * Add a new meetingGroup for a one assignment
@@ -51,5 +52,13 @@ public class Assignment {
 	public Organizer getOrganizer(){
 		return this.organizer;
 	}
-	
+	/**
+	 * String conversor of values on
+	 */
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		sb.append(organizer.toString()+" Phone: "+organizer.getPhone()+"\n");
+		sb.append(" Fixed Fee:"+ fixedFee+" Percentage: "+percentage+"\n");
+		return sb.toString();
+	}
 }
