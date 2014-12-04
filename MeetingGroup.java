@@ -91,14 +91,13 @@ public class MeetingGroup {
     public String toString(){
 		StringBuilder sb = new StringBuilder();
 		if (this!=null){	    
-		    sb.append("Information Meeting group Name: "+this.name);
+		    sb.append("\nInformation Meeting group Name: "+this.name);
 		    sb.append("\n");
 		    
 		    if(members.isEmpty()){
-		    	sb.append(" No members to show\n");
-		    	sb.append("\n");
+		    	sb.append("\nNo members to show\n");
 		    }else{
-		    	sb.append("MeetingGroup Members in alphabetical email order\n");
+		    	sb.append("\nMeetingGroup Members in alphabetical email order\n");
 		    	sb.append("\n");
 		    	List<String> emails = new ArrayList<String>();
 		    	for (User u: members){
@@ -108,7 +107,7 @@ public class MeetingGroup {
 		    	for(String s : emails){
 		    		for(User u : members){
 		    			if(u.getEmail().equals(s)&&this.isNotMemberCoordinator(s)){
-		    				sb.append(u.toString() + "\n"+u.listInterests());
+		    				sb.append(u.toString() + "\n");
 		    				sb.append("\n");
 		    				
 		    			}
@@ -121,52 +120,47 @@ public class MeetingGroup {
 		    	sb.append("No coorganizers to show\n");
 		    	sb.append("\n");
 		    }else{
-		    	sb.append("MeetingGroup Coorganizer information\n");
-		    	sb.append("\n");
+		    	sb.append("MeetingGroup Coorganizer in insertion order:\n");
 		    	for (User u: coorganizers){
-		    		sb.append(u.toString() + "\n" +u.listInterests()+ "\n");
+		    		sb.append(u + "\n");
 		    	}
 		    	sb.append("\n");
 		    }
 		    if(assignment.getOrganizer() == null){
 		    	sb.append("No Organizers to show\n");
 		    }else{
-		    	sb.append("MeetingGroup Organizer information\n");
-		    	sb.append("\n");
+		    	sb.append("MeetingGroup Organizer Information \n");
 		    	sb.append(assignment.toString());
 		    	sb.append("\n");
 		    }
+		    if(places.isEmpty()){
+    			sb.append("Not Place to show\n");
+    			sb.append("\n");
+    		
+	    	}else{ 
+	    		sb.append("List of available places------------------\n");
+	    		for (Place p : places){
+	    			sb.append(p +"\n");
+
+	    		}
+		    }
 		    
 		    if(meetings.isEmpty()){
-		    	sb.append("Not Place to show\n");
-		    	sb.append("No Meetings to show\n");
+		    	sb.append("\nNo Meetings to show\n");
 		    	sb.append("\n");
 		    }else{
-		    	for (Meeting u:meetings){
-		    		if(u.getPlace() == null){
-		    			sb.append("Not Place to show\n");
-		    			sb.append("\n");
-		    		}else{
-		    			sb.append(u.getPlace().toString()+"\n");
-		    			sb.append("\n");
-		    		}
-			    }
-		    	sb.append("MeetingGroup Meeting information\n");
-		    	sb.append("\n");
-		    	for (Meeting u:meetings){
-			    	sb.append(u.toString()+"\n");
-			    	sb.append("\n");
+		    	sb.append("MG Meetings Information------------------\n");
+		    	for (Meeting m : meetings){
+			    	sb.append(m.toString()+"\n");
 			    }
 		    	sb.append("\n");
 		    }
+		    
 		    
 		}
 		return sb.toString();
     }
-    private Object getMember(String s) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    
 	/**
      * Getter of Assignment
      * @return assignment type of Assignment
@@ -226,11 +220,13 @@ public class MeetingGroup {
 	 * @return exist type of booelan
 	 */
 	
-	public boolean existPlace(String name){
+	public boolean existThisIdPlace(Integer identifierPlace){
 		boolean exist= false;
-		for(Place p: places){
-			if(p.getName().equals(name)){
-				exist = true;
+		if(places.isEmpty()==false){
+			for(Place p : places){
+				if(p.getId().equals(identifierPlace)){
+					exist = true;
+				}
 			}
 		}
 		return exist;

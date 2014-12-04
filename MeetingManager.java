@@ -191,16 +191,13 @@ public class MeetingManager {
     		for(String s : u.getInterest()){
     			System.out.println("Checking interest ....."+s);
     			for(MeetingGroup mG : meetingGroups ){
-    				for(Meeting m : mG.getMeetings()){
-    					if(s.equals(m.getDescription())){
-    						System.out.println("Maching MeeetingGroup"+ mG.getName()+" for interest "+s);
-    					}
-    					else{
-    						System.out.println("No Matching meeting group for interest "+s);
-    					}
-    				}
+    			    if(mG.getName().contains(s)){
+    			    			System.out.println("Maching MeeetingGroup "+ mG.getName()+" for interest "+s);
+    			    }else{
+    			    	System.out.println("No Matching meeting group for interest "+s); 			    		
+    			    	
+    			    }
     			}
-    			
     		}
     		
     	}else{
@@ -225,6 +222,7 @@ public class MeetingManager {
     		Place p = new Place(name, address, zone, (privateResidence.equals("yes"))?true:false, country);
     		p.newIdPlace();
     		places.add(p);
+    		place = p;
     	}
     	return place;
     }
@@ -236,15 +234,16 @@ public class MeetingManager {
      */
     public MeetingGroup assignPlaceMG(String identifierPlace,String nameMeetingGroup) throws MeetingException{
     	MeetingGroup mG=null;
-    	if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)){
+    	int idPlace= Integer.parseInt(identifierPlace);
+    	if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)==false){
     		throw new MeetingGroupNotFound();
-    	}else if(this.getMeetingGroup(nameMeetingGroup).existPlace(identifierPlace)){
+    	}else if(this.getMeetingGroup(nameMeetingGroup).existPlace(idPlace)){
     		throw new PlaceAlreadyInMeetingGroup();
-    	}else if(places.contains(this.getPlace(identifierPlace))){
+    	}else if(places.contains(this.getPlace(idPlace))==false){
     		throw new PlaceNotFound();
     	}else{
-    		this.getMeetingGroup(nameMeetingGroup).addPlace(this.getPlace(identifierPlace));
     		mG = this.getMeetingGroup(nameMeetingGroup);
+    		mG.addPlace(this.getPlace(idPlace));
     	}
     	return mG;
     }
@@ -263,13 +262,14 @@ public class MeetingManager {
      */
     public MeetingGroup addMeetingMG(String nameMeetingGroup, String idPlace, String description,  String isDraft, String attendeeLimit,String waitList, String guestsPerMember, String attendeeTotal) throws MeetingException {
 		MeetingGroup mG = null;
-		if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)){
+		if(this.isMeetingGroupInArrayListMG(nameMeetingGroup, meetingGroups)==false){
     		throw new MeetingGroupNotFound();
-    	}else if(this.getMeetingGroup(nameMeetingGroup).existPlace(Integer.parseInt(idPlace))){
-    		throw new PlaceAlreadyInMeetingGroup();
+    	}else if(this.getMeetingGroup(nameMeetingGroup).existPlace(Integer.parseInt(idPlace))==false){
+    		throw new PlaceNotFound();
     	}else if(this.getMeetingGroup(nameMeetingGroup).existMeeting(description)){
     		throw new MeetingAlreadyInGroup();
     	}else{
+    		meetings.add(new Meeting(description,(Integer.parseInt(isDraft)==0)?true:false,Integer.parseInt(attendeeLimit),Integer.parseInt(waitList),Integer.parseInt(guestsPerMember), Integer.parseInt(attendeeTotal), this.getPlace(Integer.parseInt(idPlace))));
     		this.getMeetingGroup(nameMeetingGroup).addMeeting(new Meeting(description,(Integer.parseInt(isDraft)==0)?true:false,Integer.parseInt(attendeeLimit),Integer.parseInt(waitList),Integer.parseInt(guestsPerMember), Integer.parseInt(attendeeTotal), this.getPlace(Integer.parseInt(idPlace))));
     		mG = this.getMeetingGroup(nameMeetingGroup);
     	}
@@ -288,13 +288,14 @@ public class MeetingManager {
     public Answer addAnswer(String description,String email, String password, String guest,String result) throws MeetingException{
     	Answer a = null;
     	
+    	
     	return a;
     }
     /**
      * 13. List answer for a meeting
      * @param Meeting type of String.
      */
-    public void listMeetingAnswers(String nameMeeting){
+    public void listMeetingAnswers(String nameMeeting) throws MeetingException{
     	
     }
 

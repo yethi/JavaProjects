@@ -26,7 +26,7 @@ public class Place {
 
   private ArrayList<Meeting> meetings;
   
-  private static int idPlace = 0;
+  private static int idPlace = 1;
 
 
 
@@ -70,9 +70,9 @@ public class Place {
      *
      */
     public String toString(){
-	StringBuilder sb = new StringBuilder();
-	sb.append("\nPlace Name: "+name+"\nAddress: "+address+"\nPrivate Residence: "+((privateResidence==false) ? "No":"Yes")+"\nCountry: "+country+"\n");	
-	return sb.toString();
+    	StringBuilder sb = new StringBuilder();
+    	sb.append("Identifier: "+ id+" name: "+name+ " Address: "+address+" Zone: "+ zone+" Private residence: "+ ((privateResidence==false) ? "No":"Yes")+ " Country: "+ country); 
+    	return sb.toString();
     }
     /**
      * Increment the Id.

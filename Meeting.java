@@ -1,7 +1,9 @@
 
 package edu.uoc.prac;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 /**
  * 
  * @author Oscar Cuellas Cuellas
@@ -12,7 +14,7 @@ public class Meeting {
 
   private String description;
 
-  private Date date;
+  private Calendar date = new GregorianCalendar();
 
   private boolean isDraft;
 
@@ -53,8 +55,7 @@ public class Meeting {
      */
 
     public Meeting(String description, Date date, boolean isDraft, int attendeeLimit, int waitList, int guestsPerMember, int attendeeTotal,  Place place){
-		this.description=description;
-		this.date=date;	
+		this.description=description;	
 		this.isDraft=isDraft;
 		this.attendeeLimit=attendeeLimit;
 		this.waitList=waitList;
@@ -97,9 +98,10 @@ public class Meeting {
      *
      */
     public String toString(){
-	StringBuilder sb = new StringBuilder();
-	sb.append("Description: "+description+"\nWhen? "+date+"\nDraft? "+((isDraft==false)?"No":"Yes")+"\nMaximum attendance Limit? "+((attendeeLimit==0)?true:false)+"\nAvailable waiting list? "+((waitList==1)?true:false)+"\nNumber of guests per Member: "+guestsPerMember+ "\nExpected attendeeTotal (no anwers computed) "+attendeeLimit+"\n");	
-	return sb.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("Description: "+description+" Date"+date.get(Calendar.DAY_OF_MONTH)+"/"+ date.get(Calendar.MONTH)+"/"+date.get(Calendar.YEAR)+" AttendeeLimit: "+ attendeeLimit+" guestsPerMember: "+guestsPerMember+" attendereTotal: "+attendeeTotal );	
+		sb.append("\nRelated Place to Meeting info: "+ place);
+		return sb.toString();
     }
     
     /**

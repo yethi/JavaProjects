@@ -57,8 +57,8 @@ public class Assignment {
 	 */
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(organizer.toString()+" Phone: "+organizer.getPhone()+"\n");
-		sb.append(" Fixed Fee:"+ fixedFee+" Percentage: "+percentage+"\n");
+		sb.append("Email:"+ organizer.getEmail()+" Pwd:"+organizer.getPassword()+" Phone:"+organizer.getPhone()+"\n");
+		sb.append("Fixed Fee:"+ fixedFee+" Percentage: "+percentage+"\n");
 		return sb.toString();
 	}
 }
