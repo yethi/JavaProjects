@@ -106,7 +106,7 @@ public class MeetingGroup {
 		    	Collections.sort(emails);
 		    	for(String s : emails){
 		    		for(User u : members){
-		    			if(u.getEmail().equals(s)&&this.isNotMemberCoordinator(s)){
+		    			if(u.getEmail().equals(s)&&this.isMemberCoordinatorOfMeetingGroup(s)==false){
 		    				sb.append(u.toString() + "\n");
 		    				sb.append("\n");
 		    				
@@ -267,14 +267,30 @@ public class MeetingGroup {
 		}
 		return exist;
 	}
-	
-    public boolean isNotMemberCoordinator(String email){
-    	boolean isCoorganizer = true;
+	/**
+	 * Ask to the meeting group about if one user is coorganizer or not
+	 * @param email type of String
+	 * @return isCoorganizer type of boolean
+	 */
+    public boolean isMemberCoordinatorOfMeetingGroup(String email){
+    	boolean isCoorganizer = false;
     	for (User u : coorganizers ){
     		if(u.getEmail().equals(email)){
-    			isCoorganizer = false;
+    			isCoorganizer = true;
     		}
     	}
     	return isCoorganizer;
-    }  
+    } 
+    /**
+     * Ask to meeting group about if one user is a organizer.
+     * @param email type of String
+     * @return isOrganizer type of boolean
+     */
+    public boolean isMemberOrganizerOfMeetingGroup(String email){
+    	boolean isOrganizer = false;
+    	if(assignment.getOrganizer().getEmail().equals(email)){
+    		isOrganizer = true;
+    	}
+    	return isOrganizer;
+    }
 }

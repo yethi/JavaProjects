@@ -9,10 +9,10 @@ package edu.uoc.prac;
 
 enum AttendingResult {
 
-  YES,
+  yes,
 
-  NOT,
+  no,
 
-  WANTASPOT;
+  WantASpot;
 
 }

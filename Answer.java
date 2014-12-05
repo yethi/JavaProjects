@@ -118,7 +118,14 @@ public class Answer {
 	public void setUser(User user) {
 		this.user = user;
 	}
-
-
-  
+	/**
+	 * String out to info in Answer
+	 */
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		String results = new String();
+		sb.append("\nUser information: "+user.toString()+"Guests Coming: "+guests+"\nAttending Result: "+result);
+		sb.append("\nInformation Meeting :"+meeting.toString());
+		return sb.toString();
+	}
 }

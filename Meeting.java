@@ -99,7 +99,7 @@ public class Meeting {
      */
     public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Description: "+description+" Date"+date.get(Calendar.DAY_OF_MONTH)+"/"+ date.get(Calendar.MONTH)+"/"+date.get(Calendar.YEAR)+" AttendeeLimit: "+ attendeeLimit+" guestsPerMember: "+guestsPerMember+" attendereTotal: "+attendeeTotal );	
+		sb.append("Description: "+description+" Date: "+date.get(Calendar.DAY_OF_MONTH)+"-"+ date.get(Calendar.MONTH)+"-"+date.get(Calendar.YEAR)+" AttendeeLimit: "+ attendeeLimit+" guestsPerMember: "+guestsPerMember+" attendeeTotal: "+attendeeTotal );	
 		sb.append("\nRelated Place to Meeting info: "+ place);
 		return sb.toString();
     }
@@ -110,6 +110,37 @@ public class Meeting {
      */
 	public Place getPlace() {
 		return this.place;
+	}
+	/**
+	 * Getter of isDraft
+	 * @return isDraft type of boolean
+	 */
+	public boolean isDraft(){
+		return this.isDraft;
+	}
+	/**
+	 * Getter for Guest per Member
+	 * @return guest per member type of String
+	 */
+	public Integer getGuestsPerMember(){
+		return this.guestsPerMember;
+	}
+	/**
+	 * Getter of AttendeeLimit
+	 * @return attendeeeLimit type of Integer
+	 */
+	public Integer getAttendeeLimit (){
+		return this.attendeeLimit;
+	}
+	public Integer getAttendeeTotal(){
+		return this.attendeeTotal;
+	}
+	/**
+	 * Getter a wait list on member
+	 * @return waitList type of integer
+	 */
+	public Integer getWaitList() {
+		return waitList;
 	}
 
   

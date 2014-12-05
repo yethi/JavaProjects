@@ -187,7 +187,6 @@ public class MeetingManager {
     public void searchMeeting(String email, String password) throws MeetingException{
     	if(this.isUserInArrayLisyOfUsers(email, users)){
     		User u = this.getUserFromUsersBy(email, password);
-    		boolean hasInterest = false;
     		for(String s : u.getInterest()){
     			System.out.println("Checking interest ....."+s);
     			for(MeetingGroup mG : meetingGroups ){
@@ -288,7 +287,36 @@ public class MeetingManager {
     public Answer addAnswer(String description,String email, String password, String guest,String result) throws MeetingException{
     	Answer a = null;
     	
-    	
+		if(result.equals("no")){
+			System.out.println("Answer with Not attendance to Meeting to be added");
+			a = new Answer(false, Integer.parseInt(guest), AttendingResult.no, this.getMeeting(description), this.getUserFromUsersBy(email, password));
+		}else{
+			if(this.isUserInArrayLisyOfUsers(email, users)==false){
+	    		throw new UserNotFound();
+	    	}else if(this.isMeetingInMeetingManager(description)==false){
+	    		throw new MeetingNotFound();
+	    	}else if(this.isUserInMeetingGroup(email, description)==false){
+	    		throw new UserNotFoundInMG();
+	    	}else if(this.thisAnswerExist(email, description)){
+	    		throw new AnswerAlreadyFoundForUserMeeting();
+	    	}else if(Integer.parseInt(guest) > this.getMeeting(description).getGuestsPerMember()){
+	    		throw new AnswerExceedsGuestsPerMeeting();
+	    	}
+	    	if(this.getMeeting(description).isDraft()){
+	    		System.out.println("This meeting is a draft. Please wait organizer confirmation");
+	    	}
+			if(Integer.parseInt(guest) + 1 >= this.getMeeting(description).getAttendeeTotal()){
+				if(this.getMeeting(description).getWaitList() == 0){
+						throw new MeetingIsFull();
+				}else{
+					System.out.println("The meeting is full but has waiting List. Wait in Waiting List");
+					a = new Answer(true, Integer.parseInt(guest), AttendingResult.WantASpot, this.getMeeting(description), this.getUserFromUsersBy(email, password));
+				}
+			}else{
+				a = new Answer(true, Integer.parseInt(guest), AttendingResult.yes, this.getMeeting(description), this.getUserFromUsersBy(email, password));
+	    	}
+		}
+    	answers.add(a);
     	return a;
     }
     /**
@@ -296,7 +324,27 @@ public class MeetingManager {
      * @param Meeting type of String.
      */
     public void listMeetingAnswers(String nameMeeting) throws MeetingException{
-    	
+    	if(this.thisAnswerExist(nameMeeting)==false){
+    		throw new NoMeetingOrNoAnswers();
+    	}
+    	for (Answer a : answers){
+    		if(a.getMeeting().getDescription().equals(nameMeeting)){
+    			if(a.getResult().equals(AttendingResult.yes) ){
+    				System.out.print("Attending to Meeting");
+    				System.out.println(a);
+    				System.out.println();
+    			}else if(a.getResult().equals(AttendingResult.WantASpot)){
+    				System.out.print("In waiting list");
+    				System.out.println(a);
+    				System.out.println();
+    			}else if(a.getResult().equals(AttendingResult.no)){
+    				System.out.print("No Attending to Meeting");
+    				System.out.println(a);
+    				System.out.println();
+    			}
+    			
+    		}
+    	}
     }
 
 	/**
@@ -414,6 +462,86 @@ public class MeetingManager {
 		}
 		return place;
 	}
+    /**
+     * Is meeting inside of meetingManager
+     * @param description type os string
+     * @return inSide type of boolean
+     */
+    private boolean isMeetingInMeetingManager(String description){
+    	boolean inSide = false;
+    	for(Meeting m : meetings){
+    		if(m.getDescription().equals(description)&&meetings.isEmpty() == false){
+    			inSide = true;
+    		}
+    	}
+    	return inSide;
+    }
+    /**
+     * USer is member, coorganizer o organizer of Meeting Group.
+     * @param email type of String
+     * @param description type of String
+     * @return isInside type of boolean
+     */
+    
+    private boolean isUserInMeetingGroup(String email, String description){
+    	boolean isInside = false;
+    	for(MeetingGroup mG : meetingGroups){
+    		if(this.isUserInArrayLisyOfUsers(email, mG.getMembers())|| this.isUserInArrayLisyOfUsers(email, mG.getCoorganizator())||
+    				mG.isMemberOrganizerOfMeetingGroup(email)){
+    			isInside = true;
+    		}
+    	}
+    		
+    	return isInside;
+    }
+    /**
+     * Check is exist that awnser yet
+     * @param email type of string
+     * @param password type of string
+     * @param descriptionMeeting type of string
+     * @return exist type of boolean
+     */
+    private boolean thisAnswerExist(String email,String description){
+    	boolean exist = false;
+    	if(answers.isEmpty() == false){
+	    	for(Answer a : answers){
+	    		if(a.getMeeting().getDescription().equals(description)&&a.getUser().getEmail().equals(email)){
+	    			exist = true;
+	    		}
+	    	}	
+    	}
+    	return exist;
+    }
+    /**
+     * Check is exist that awnser yet
+     * @param description type of string
+     * @return exist type of boolean
+     */
+    private boolean thisAnswerExist(String description){
+    	boolean exist = false;
+    	if(answers.isEmpty() == false){
+	    	for(Answer a : answers){
+	    		if(a.getMeeting().getDescription().equals(description)){
+	    			exist = true;
+	    		}
+	    	}	
+    	}
+    	return exist;
+    }
+    /**
+     * Getter for meeting
+     * @param description type of string
+     * @return meeting type of string
+     */
+    private Meeting getMeeting(String description){
+    	Meeting meeting = null;
+    	for(Meeting m : meetings){
+    		if(m.getDescription().equals(description)){
+    			meeting = m;
+    		}
+    	}
+    	return meeting;
+    }
 
 
 	
