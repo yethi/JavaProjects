@@ -5,6 +5,7 @@ import java.util.Date;
  * 
  * Answer of one user about one meeting.
  * @author Oscar cuellas
+ *  Cuellas
  *
  */
 
